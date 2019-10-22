@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login & Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <script type="text/javascript">
+        function AlertIt() {
+            var answer = confirm("Are you sure delete {{user.first_name}} this user?.")
+            if (answer)
+                window.location = "/admin/{{user.id}}/delete";
+        }
+    </script>
+
+
+
+    <div class="container">
+
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">Staff App</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/main">Home<span class="sr-only">(current)</span></a>
+                    </li>
+
+                </ul>
+                <ul></ul>
+                {% if live_user.user_level == 9 %}
+                <a class="btn btn-primary btn-lg" href="/main/History">Staff History</a>
+                <a href="/admin"><button class="btn btn-light my-2 my-sm-0" type="submit">To Admin</button></a>
+                {%endif%}
+                <a href="/logout"><button class="btn btn-danger my-2 my-sm-0" type="submit">LogOut</button></a>
+
+            </div>
+        </nav>
+        <div class="jumbotron"
+            style="
+        background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(30,87,153,0.54) 46%, rgba(125,185,232,0.18) 82%, rgba(125,185,232,0) 100%); /* FF3.6-15 */
+         
+        background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* Chrome10-25,Safari5.1-6 */
+         
+        background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+         
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9 */">
+            <h1 class="" style="color: white">Architectural edifice</h1>
+            <h4 class="" style="color: white">Welcome {{ live_user.first_name }} {{ live_user.last_name}}</h4>
+            <div class="row">
+                <div class="col-8">
+
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/new">Add Customer</a>
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/neworder">Add Order</a>
+                        </div>
+                        {% if live_user.user_level == 9 %}
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/History">History</a>
+                        </div>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Left column -->
+            <div class="row">
+
+
+
+
+
+                <!-- Main Page -->
+                <div class="col">
+                    <div class="row justify-content-center">
+                        <h1>My Tasks</h1>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td scope="col">Design</td>
+                                    <td scope="col">Design Type</td>
+                                    <td scope="col">Status</td>
+                                    <td scope="col">Delivery Date</td>
+                                    <td scope="col">Customer Name</td>
+                                    <td scope="col">Added by</td>
+                                    <td scope="col">Assigned to</td>
+                                    <td scope="col">Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in live_user.joined_order.all %}
+                                {% if order.deletes == 'add' and order.status != 'Compleated' and order.status != 'Approved'%}
+                                <tr>
+                                    <!-- <td>{{order.id}}</td> -->
+                                    <td> <a href="main/neworder/{{order.customer_order.id}}/{{order.id}}/show">{{order.design}}
+                                        </a>
+                                    </td>
+                                    <td>{{order.design_type}}</td>
+                                    <td style="font-weight: bold">{{order.status}}</td>
+                                    <td>{{order.delivery}}</td>
+                                    <td><a href="main/neworder/{{order.customer_order.id}}/show">{{order.customer_order.first_name}}
+                                            {{order.customer_order.last_name}}</a></td>
+                                    <td>{{order.user_to_order.first_name}}</td>
+
+                                    <td>
+                                        <form action="main/assignThisOrder" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="order_id" value="{{order.id}}">
+                                            <select name="user" id="">
+                                                <option value="{{live_user.id}}">{{live_user.first_name}}
+                                                    {{live_user.last_name}}</option>
+                                                {% for a in all_users %}
+                                                {% if live_user.id != a.id and a.user_level != 12  %}
+
+                                                <option value="{{a.id}}">{{a.first_name}} {{a.last_name}}
+                                                </option>
+                                                {%endif%}
+
+                                                {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="user_id" value="{{a.id}}">
+                                            <input class="btn btn-primary" type="submit" value="Assign this task To">
+                                            <!-- <a style="font-weight: bold" href="delete">Add to Favorite</a> -->
+                                        </form>
+                                    </td>
+                                    <td><a href="main/{{order.id}}/remove">Remove</a></td>
+                                </tr>
+                                {%endif%}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row justify-content-center">
+                        <h1>All Tasks</h1>
+                        <div data-spy="scroll" style="max-height:350px; overflow:auto; ">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <td scope="col">Design</td>
+                                        <td scope="col">Design Type</td>
+                                        <td scope="col">Status</td>
+                                        <td scope="col">Delivery Date</td>
+                                        <td scope="col">Customer Name</td>
+                                        <td scope="col">Added by</td>
+                                        <td scope="col">Assigned to</td>
+                                        <td scope="col">Change task to</td>
+                                        <td scope="col">Action</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for order in all_orders %}
+                                    {% if order.deletes == 'add' and order.status != 'Compleated' and order.status != 'Approved'%}
+                                    <h1>{% if live_user not in order.joined_users.all%}</h1>
+
+                                    <tr>
+                                        <!-- <td>{{order.id}}</td> -->
+                                        <td> <a href="main/neworder/{{order.customer_order.id}}/{{order.id}}/show">{{order.design}}
+                                            </a>
+                                        </td>
+
+                                        <td>{{order.design_type}}</td>
+                                        <td style="font-weight: bold">{{order.status}}</td>
+                                        <td>{{order.delivery}}</td>
+                                        <td><a href="main/neworder/{{order.customer_order.id}}/show">{{order.customer_order.first_name}}
+                                                {{order.customer_order.last_name}}</a></td>
+                                        <td>{{order.user_to_order.first_name}} {{order.user_to_order.last_name}}
+                                        </td>
+                                        {% for a in order.joined_users.all %}
+                                        <td>{{a.first_name}} {{a.last_name}}</td>
+                                        {% endfor %}
+                                        <!-- <td>{{order.joined_users}}</td> -->
+                                        <td>
+                                            <form action="main/JoinThisOrder" method="post">
+                                                {% csrf_token %}
+                                                <!-- <input type="hidden" name="order_id" value="{{order.id}}">
+                                                {% for a in order.joined_users.all %}
+                                                {{a.first_name}} |
+                                                <input type="hidden" name="user_id" value="{{a.id}}">
+                                                <input class="btn btn-primary" type="submit" value="add to My Tasks">
+                                            -->
+                                                <input type="hidden" name="order_id" value="{{order.id}}">
+                                                <select name="user" id="">
+                                                    <option value="{{live_user.id}}">{{live_user.first_name}}
+                                                    </option>
+                                                    {% for a in all_users %}
+                                                    {% if live_user.id != a.id and a.user_level != 12 %}
+                                                    <option value="{{a.id}}">{{a.first_name}} {{a.last_name}}
+                                                    </option>
+                                                    {%endif%}
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="hidden" name="user_id" value="{{a.id}}">
+                                                <input class="btn btn-primary" type="submit"
+                                                    value="Assign this task To">
+                                                <!-- <a style="font-weight: bold" href="delete">Add to Favorite</a> -->
+                                            </form>
+                                            {% endfor %}
+                                        </td>
+                                        <td><a href="main/{{order.id}}/remove">Remove</a></td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <h1> Compleated !!</h1>
+                    <div data-spy="scroll" style="max-height:350px; overflow:auto; ">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td scope="col">Design</td>
+                                    <td scope="col">Design Type</td>
+                                    <td scope="col">Status</td>
+                                    <td scope="col">Delivery Date</td>
+                                    <td scope="col">Customer Name</td>
+                                    <td scope="col">Added by</td>
+                                    <td scope="col">Assigned to</td>
+                                    <td scope="col">Change task to</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for order in all_orders %}
+                                {% if order.deletes == 'add' and order.status == 'Compleated'%}
+
+
+                                <tr>
+                                    <!-- <td>{{order.id}}</td> -->
+                                    <td> <a href="main/neworder/{{order.customer_order.id}}/{{order.id}}/show">{{order.design}}
+                                        </a>
+                                    </td>
+
+                                    <td>{{order.design_type}}</td>
+                                    <td style="font-weight: bold">{{order.status}}</td>
+                                    <td>{{order.delivery}}</td>
+                                    <td><a href="main/neworder/{{order.customer_order.id}}/show">{{order.customer_order.first_name}}
+                                            {{order.customer_order.last_name}}</a></td>
+                                    <td>{{order.user_to_order.first_name}} {{order.user_to_order.last_name}}</td>
+                                    {% for a in order.joined_users.all %}
+                                    <td>{{a.first_name}} {{a.last_name}}</td>
+                                    {% endfor %}
+                                    <!-- <td>{{order.joined_users}}</td> -->
+                                    <td>
+                                        <form action="main/JoinThisOrder" method="post">
+                                            {% csrf_token %}
+                                            <!-- <input type="hidden" name="order_id" value="{{order.id}}">
+                                                    {% for a in order.joined_users.all %}
+                                                    {{a.first_name}} |
+                                                    <input type="hidden" name="user_id" value="{{a.id}}">
+                                                     <input class="btn btn-primary" type="submit" value="add to My Tasks">
+                                                -->
+                                            <input type="hidden" name="order_id" value="{{order.id}}">
+                                            <select name="user" id="">
+                                                <option value="{{live_user.id}}">{{live_user.first_name}}</option>
+                                                {% for a in all_users %}
+                                                {% if live_user.id != a.id and a.user_level != 12 %}
+                                                <option value="{{a.id}}">{{a.first_name}} {{a.last_name}}</option>
+                                                {%endif%}
+                                                {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="user_id" value="{{a.id}}">
+                                            <input class="btn btn-primary" type="submit" value="Assign this task To">
+                                            <!-- <a style="font-weight: bold" href="delete">Add to Favorite</a> -->
+                                        </form>
+                                        {% endfor %}
+                                    </td>
+                                    <!-- <td><a href="main/{{order.id}}/delete">Delete</a></td> -->
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <h1> Approved !!</h1>
+                        <div data-spy="scroll" style="max-height:250px; overflow:auto; ">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <td scope="col">Design</td>
+                                        <td scope="col">Design Type</td>
+                                        <td scope="col">Status</td>
+                                        <td scope="col">Delivery Date</td>
+                                        <td scope="col">Customer Name</td>
+                                        <td scope="col">Added by</td>
+                                        <td scope="col">Assigned to</td>
+                                        <td scope="col">Change task to</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for order in all_orders %}
+                                    {% if order.deletes == 'add' and order.status == 'Approved'%}
+
+
+                                    <tr>
+                                        <!-- <td>{{order.id}}</td> -->
+                                        <td> <a href="main/neworder/{{order.customer_order.id}}/{{order.id}}/show">{{order.design}}
+                                            </a>
+                                        </td>
+
+                                        <td>{{order.design_type}}</td>
+                                        <td style="font-weight: bold">{{order.status}}</td>
+                                        <td>{{order.delivery}}</td>
+                                        <td><a href="main/neworder/{{order.customer_order.id}}/show">{{order.customer_order.first_name}}
+                                                {{order.customer_order.last_name}}</a></td>
+                                        <td>{{order.user_to_order.first_name}} {{order.user_to_order.last_name}}
+                                        </td>
+                                        {% for a in order.joined_users.all %}
+                                        <td>{{a.first_name}} {{a.last_name}}</td>
+                                        {% endfor %}
+                                        <!-- <td>{{order.joined_users}}</td> -->
+                                        <td>
+                                            <form action="main/JoinThisOrder" method="post">
+                                                {% csrf_token %}
+                                                <!-- <input type="hidden" name="order_id" value="{{order.id}}">
+                                                        {% for a in order.joined_users.all %}
+                                                        {{a.first_name}} |
+                                                        <input type="hidden" name="user_id" value="{{a.id}}">
+                                                         <input class="btn btn-primary" type="submit" value="add to My Tasks">
+                                                    -->
+                                                <input type="hidden" name="order_id" value="{{order.id}}">
+                                                <select name="user" id="">
+                                                    <option value="{{live_user.id}}">{{live_user.first_name}}
+                                                    </option>
+                                                    {% for a in all_users %}
+                                                    {% if live_user.id != a.id and a.user_level != 12 %}
+                                                    <option value="{{a.id}}">{{a.first_name}} {{a.last_name}}
+                                                    </option>
+                                                    {%endif%}
+                                                    {% endfor %}
+                                                </select>
+                                                <input type="hidden" name="user_id" value="{{a.id}}">
+                                                <input class="btn btn-primary" type="submit"
+                                                    value="Assign this task To">
+                                                <!-- <a style="font-weight: bold" href="delete">Add to Favorite</a> -->
+                                            </form>
+                                            {% endfor %}
+                                        </td>
+                                        <!-- <td><a href="main/{{order.id}}/delete">Delete</a></td> -->
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

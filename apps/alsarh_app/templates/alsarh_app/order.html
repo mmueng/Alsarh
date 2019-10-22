@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login & Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .box {
+            color: #fff;
+            padding: 20px;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .Plan {
+            background: #ff0000;
+        }
+
+        .Interior {
+            background: #228B22;
+        }
+
+        .Exterior {
+            background: #0000ff;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input[type="radio"]').click(function () {
+                var inputValue = $(this).attr("value");
+                var targetBox = $("." + inputValue);
+                $(".box").not(targetBox).hide();
+                $(targetBox).show();
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <script type="text/javascript">
+        function AlertIt() {
+            var answer = confirm("Are you sure delete {{user.first_name}} this user?.")
+            if (answer)
+                window.location = "/admin/{{user.id}}/delete";
+        }
+    </script>
+
+
+
+    <div class="container">
+
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">Staff App</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/main">Home<span class="sr-only">(current)</span></a>
+                    </li>
+
+                </ul>
+
+                <a href="/admin"><button class="btn btn-light my-2 my-sm-0" type="submit">To Admin</button></a>
+                <a href="/logout"><button class="btn btn-danger my-2 my-sm-0" type="submit">LogOut</button></a>
+
+            </div>
+        </nav>
+        <div class="jumbotron"
+            style="
+        background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(30,87,153,0.54) 46%, rgba(125,185,232,0.18) 82%, rgba(125,185,232,0) 100%); /* FF3.6-15 */
+         
+        background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* Chrome10-25,Safari5.1-6 */
+         
+        background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+         
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9 */">
+            <h1 class="" style="color: white">Architectural edifice</h1>
+            <h4 class="" style="color: white">Welcome {{ live_user.first_name }} {{ live_user.last_name}}</h4>
+            <div class="row">
+                <div class="col-8">
+
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/new">Add Customer</a>
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/neworder">Add Order</a>
+                        </div>
+                        {% if live_user.user_level == 9 %}
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/History">History</a>
+                        </div>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Left column -->
+            <div class="row">
+                <div class="col-4">
+                    <div class="row justify-content-center">
+                    </div>
+                    <h3>Customer Information</h3>
+                    <h5>Name: {{customer.first_name}} {{customer.last_name}}</h5>
+                    <p>E-mail: {{customer.email}}</p>
+                    <p>Mobile No.: {{customer.mobile}}</p>
+                    <p>Country: {{customer.country}}</p>
+                    <p>City: {{customer.city}}</p>
+                    <p>Address: {{customer.address1}} {{customer.address2}}</p>
+                    <p>Created at: {{customer.created_at}} - Last update {{customer.updated_at}} - added by:
+                        {{customer.creator.first_name}} {{customer.creator.last_name}}</p>
+
+                    <h1>History</h1>
+                    <div data-spy="scroll" style="max-height:350px; overflow:auto; ">
+                        <table class="table table-hover">
+                            {% for a in allhistory %}
+
+                            {% if a.orderHistory.id == order.id %}
+                            <tr>
+                                <td>{{a.status}}</td>
+                                <td>{{a.first_name}} {{a.last_name}}</td>
+                                <td>{{a.created_at}}</td>
+                            </tr>
+                            {%endif%}
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                </div>
+
+
+
+
+
+
+                <!-- Main Page -->
+                <div class="col-8">
+
+                    <div class="registration">
+                        <a href="/main/neworder/{{customer.id}}/show"><button class="btn btn-warning my-2 my-sm-0"
+                                type="submit">Back..</button></a>
+                        <a href="/main"><button class="btn btn-warning my-2 my-sm-0"
+                                type="submit">Dashboard</button></a>
+                        <a href="edit"><button class="btn btn-warning my-2 my-sm-0" type="submit">Edit
+                                Order</button></a>
+                        <a href="remove2"><button class="btn btn-warning my-2 my-sm-0" type="submit">Remove</button></a>
+                        <!-- <div class="col-md"> -->
+                        <!-- <div class="col"> -->
+
+                        <h1> Order Detailes</h1>
+
+                        <h3>This order assigned to :
+                            {%for eng in order.joined_users.all%}
+                            <span style="color: #ff0000;">{{eng.first_name}} {{eng.last_name}}</span>
+                            {%endfor%}
+                        </h3>
+
+                        {%for eng in order.joined_users.all%}
+
+                        {% if live_user.id == eng.id or live_user.user_level == 9 %}
+                        <form action="status" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{order.id}}">
+
+                            <label for="">
+                                <h4>Change Status:</h4>
+                            </label>
+                            <select name="status" id="">
+                                <option value="{{order.stauts}}">{{order.status}}</option>
+                                {% if order.status != 'Received' %}
+                                <option value="Received">Received</option>
+                                {% endif %}
+                                {% if order.status != 'Start' %}
+                                <option value="Start">Start</option>
+                                {% endif %}
+                                {% if order.status != 'Compleated' %}
+                                <option value="Compleated">Completed</option>
+                                {% endif %}
+                                {% if order.status != 'Approved' %}
+                                <option value="Approved">Approved</option>
+                                {% endif %}
+                            </select>
+                            <!-- <input type="hidden" name="user_id" value="{{order.id}}"> -->
+                            <input class="btn btn-primary" type="submit" value="Change">
+                            <!-- <a style="font-weight: bold" href="delete">Add to Favorite</a> -->
+                        </form>
+                        {% endif %}
+                        {%endfor%}
+                        <table class="table table-hover">
+                            <tr>
+                                <td>
+                                    <h4>{{order.design}} Design - {{order.design_type}} Type </h4>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>
+                                    <h4>Status: {{order.status}}</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                    <h5>Requirment: {{order.requirment}}</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+
+                                    <h5>Estimated Delivery Date: {{order.delivery}}</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p>Added at {{order.created_at}} - Last update at {{order.updated_at}} - Added by
+                                        {{order.user_to_order.first_name}} {{order.user_to_order.last_name}}</p>
+                                </td>
+                            </tr>
+                        </table>
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login & Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        .box {
+            color: #fff;
+            padding: 20px;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .Plan {
+            background: #ff0000;
+        }
+
+        .Interior {
+            background: #228B22;
+        }
+
+        .Exterior {
+            background: #0000ff;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('input[type="radio"]').click(function () {
+                var inputValue = $(this).attr("value");
+                var targetBox = $("." + inputValue);
+                $(".box").not(targetBox).hide();
+                $(targetBox).show();
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <script type="text/javascript">
+        function AlertIt() {
+            var answer = confirm("Are you sure delete {{user.first_name}} this user?.")
+            if (answer)
+                window.location = "/admin/{{user.id}}/delete";
+        }
+    </script>
+
+
+
+    <div class="container">
+
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">Staff App</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/main">Home<span class="sr-only">(current)</span></a>
+                    </li>
+
+                </ul>
+
+                <a href="/admin"><button class="btn btn-light my-2 my-sm-0" type="submit">To Admin</button></a>
+                <a href="/logout"><button class="btn btn-danger my-2 my-sm-0" type="submit">LogOut</button></a>
+
+            </div>
+        </nav>
+        <div class="jumbotron"
+            style="
+    background: -moz-linear-gradient(top, rgba(30,87,153,1) 0%, rgba(30,87,153,0.54) 46%, rgba(125,185,232,0.18) 82%, rgba(125,185,232,0) 100%); /* FF3.6-15 */
+     
+    background: -webkit-linear-gradient(top, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* Chrome10-25,Safari5.1-6 */
+     
+    background: linear-gradient(to bottom, rgba(30,87,153,1) 0%,rgba(30,87,153,0.54) 46%,rgba(125,185,232,0.18) 82%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+     
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9 */">
+            <h1 class="" style="color: white">Architectural edifice</h1>
+            <h4 class="" style="color: white">Welcome {{ live_user.first_name }} {{ live_user.last_name}}</h4>
+            <div class="row">
+                <div class="col-8">
+
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/new">Add Customer</a>
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/neworder">Add Order</a>
+                        </div>
+                        {% if live_user.user_level == 9 %}
+                        <div class="col">
+                            <a class="btn btn-primary btn-lg" href="/main/History">History</a>
+                        </div>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Left column -->
+            <div class="row">
+                <div class="col-4">
+                    <div>
+                        <a href="/main/neworder/{{customer.id}}/edit"><button class="btn btn-danger my-2 my-sm-0"
+                                type="submit">Edit</button></a>
+                    </div>
+
+                    <div class="row justify-content-center">
+
+                    </div>
+                    <h3>Customer Information</h3>
+                    <h5>Name: {{customer.first_name}} {{customer.last_name}}</h5>
+                    <p>E-mail: {{customer.email}}</p>
+                    <p>Mobile No.: {{customer.mobile}}</p>
+                    <p>Country: {{customer.country}}</p>
+                    <p>City: {{customer.city}}</p>
+                    <p>Address: {{customer.address1}} {{customer.address2}}</p>
+
+                </div>
+
+
+
+
+
+                <!-- Main Page -->
+                <div class="col-8">
+                    <div class="registration">
+                        <table class="table table-hover">
+                            <a href="/main"><button class="btn btn-warning my-2 my-sm-0"
+                                    type="submit">Back..</button></a>
+                            <thead>
+                                <tr>
+                                    <td scope="col">Design</td>
+                                    <td scope="col">Design Type</td>
+                                    <td scope="col">Status</td>
+                                    <td scope="col">Delivery Date</td>
+                                    <td scope="col">Added by</td>
+                                    <td scope="col">Assigned to</td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for customers in customer.order_customer.all %}
+                                {% if customers.deletes != "delete" %}
+                                <tr>
+                                    <td> <a href="{{customers.id}}/show">{{customers.design}}
+                                        </a>
+                                    </td>
+                                    <td>{{customers.design_type}}</td>
+                                    <td style="font-weight: bold">{{customers.status}}</td>
+                                    <td>{{customers.delivery}}</td>
+                                    <td>{{customers.user_to_order.first_name}}</td>
+                                    {% for eng in customers.joined_users.all %}
+                                    <td>{{eng.first_name}} {{eng.last_name}}</td>
+                                    {%endfor%}
+                                </tr>
+                                {%endif%}
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                        <!-- <div class="col-md"> -->
+                        <!-- <div class="col"> -->
+                        {{customer.joined_order.first_name}}
+                        <h1> Add Order to {{customer.first_name}} {{customer.last_name}}</h1>
+
+
+
+                        <form action="addorder" method="post">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="form" value="register">
+                            <section>
+                                <label for='l_name'>This order to: </label>
+                                <select name='engineer'>
+                                    <option value="{{live_user.id}}">{{live_user.first_name}} {{live_user.last_name}}
+                                    </option>
+                                    {% for user in all_users %}
+                                    {% if live_user.id != user.id and user.user_level != 12 %}
+                                    <option value="{{user.id}}">{{user.first_name}}{{user.last_name}}
+                                    </option>
+                                    {%endif%}
+                                    {% endfor %}
+                                </select>
+                            </section>
+
+                            <section class='reg-info'>
+                                <input type="radio" id="1" name="design" value="">
+                                <input type="radio" id="2" name="design" value="Plan" checked>Plan
+                                <input type="radio" id="3" name="design" value="Interior"> <label
+                                    for='l_name'>Interior</label>
+                                <input type="radio" id="4" name="design" value="Exterior"> <label
+                                    for='l_name'>Exterior</label>
+                            </section>
+
+
+                            <section>
+                                <label for='l_name'>Design Title:</label>
+                                <input type="text" name="design_type" class="form-control" id="">
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% if message.extra_tags == 'design_type' %}
+                                <p class='error' style="color: red">* {{message}}</p>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </section>
+
+                            <!-- <div class="Plan box"><strong>Plan Selected</strong>
+                                <section>
+                                    <select name='design_type'>
+                                        <option value="">Select Type</option>
+                                        <option value="House">House</option>
+                                        <option value="Apartment">Apartment</option>
+                                        <option value="Building">Buliding</option>
+                                    </select>
+                                </section>
+                            </div>
+                            <div class="Interior box"><strong>Interior</strong>
+                                <section>
+                                    <select name='design_type'>
+                                        <option value="">Select Type</option>
+                                        <option value="Reception">Reception</option>
+                                        <option value="Hall">Hall</option>
+                                        <option value="Kitchen">Kitchen</option>
+                                        <option value="Room">Room</option>
+                                        <option value="Bathroom">Bathroom</option>
+                                        <option value="Store">Store</option>
+                                        <option value="Office">Office</option>
+                                    </select>
+                                </section>
+                            </div>
+                            <div class="Exterior box"><strong>Exterior</strong>
+                                <section>
+                                    <select name='design_type'>
+                                        <option value="">Select Type</option>
+                                        <option value="House">House</option>
+                                        <option value="Building">Buliding</option>
+                                    </select>
+                                </section>
+                            </div> -->
+
+                            <section class='reg-info'>
+                                <label for='l_name'>Estmated Delivery date:</label>
+                                <input type="date" name="delivery" class="form-control" id="">
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% if message.extra_tags == 'delivery' %}
+                                <p class='error' style="color: red">* {{message}}</p>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </section>
+
+                            <section class='reg-info'>
+                                <label for='l_name'>Requirments:</label>
+                                <textarea name="requirment" class="form-control" id="exampleFormControlTextarea1"
+                                    rows="3"></textarea>
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% if message.extra_tags == 'requirment' %}
+                                <p class='error' style="color: red">* {{message}}</p>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </section>
+
+
+
+
+
+                            <input type="submit" name="" value="Add Order" id="" class="btn btn-primary">
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
