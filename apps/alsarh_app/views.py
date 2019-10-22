@@ -258,6 +258,7 @@ def show_order(request, customerID, orderID):
         'all_customers': Customer.objects.all(),
         'all_users': User.objects.all(),
         'allhistory': History.objects.all().order_by('-created_at'),
+        'all_comments': Comments.objects.all(),
 
     }
     return render(request, 'alsarh_app/order.html', context)
@@ -284,6 +285,17 @@ def status(request,customerID, orderID):
     orders.save()
     return redirect(f'/main/neworder/{customerID}/{orderID}/show')
 
+def post_comment(request,customerID, orderID):
+    if not valid_login(request):
+        return redirect('/')
+    user = User.objects.get(id=request.session['live_user'])
+    orders = Order.objects.get(id=int(orderID))
+    # message = request.message
+    print('****'*20, user.id, '****'*20)
+    Comments.objects.create(
+        comment=request.POST['comment'], user_to_comment=user, message_to_comment=orders)
+    messages.success(request, "Post a Message successfully Created")
+    return redirect(f'/main/neworder/{customerID}/{orderID}/show')
 
 def remove(request, orderID):
     if not valid_login:

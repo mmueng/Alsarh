@@ -151,3 +151,12 @@ class History(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     orderHistory = models.ForeignKey(Order, related_name="HistoryOrder")
     userHistory = models.ForeignKey(User, related_name="HistoryUser")
+
+
+class Comments(models.Model):
+    user_to_comment = models.ForeignKey(User, related_name='comment_to_user')
+    message_to_comment = models.ForeignKey(
+        Order, related_name='comment_to_message')
+    comment = models.CharField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

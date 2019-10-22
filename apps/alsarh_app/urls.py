@@ -20,6 +20,11 @@ urlpatterns = [
     url(r'^/neworder/(?P<customerID>\d+)/edit/process$', views.edit_customer),
     url(r'^/neworder/(?P<customerID>\d+)/(?P<orderID>\d+)/show$', views.show_order),
     url(r'^/neworder/(?P<customerID>\d+)/(?P<orderID>\d+)/edit$', views.edit_order),
+
+    url(r'^/neworder/(?P<customerID>\d+)/(?P<orderID>\d+)/postcomment$',
+        views.post_comment),
+
+
     url(r'^/neworder/(?P<customerID>\d+)/(?P<orderID>\d+)/status$', views.status),
     url(r'^/neworder/(?P<customerID>\d+)/(?P<orderID>\d+)/process$',
         views.edit_order_process),

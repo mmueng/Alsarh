@@ -237,6 +237,38 @@
 
 
                     </div>
+                    <h1>Post a Comment:</h1>
+                    {% for comment in order.comment_to_message.all %}
+                    <div class="col-md-12 ">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <li style="list-style-type: none;">
+                                    <p><span style="color: green; font-weight: bold;">{{ comment.user_to_comment.first_name}}
+                                            :</span>
+                                        <span style=" font-weight: bold;"> {{ comment.comment}}</span></p>
+                                    <p><span>Created: {{ comment.created_at}}</span>
+                                    </p>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    {% endfor %}
+                    <form action="postcomment" method="post">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="input-group mb-3">
+                                        <input type="hidden" name="message_id" value="{{show.id}}">
+                                        <input placeholder="Comment" class="form-control" name="comment" id="" cols="30"
+                                            rows="4">
+                                        <input class="btn btn-outline-primary" type="submit" value="Post a Comment">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
                 </div>
             </div>
         </div>
