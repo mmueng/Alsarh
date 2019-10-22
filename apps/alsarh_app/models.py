@@ -112,6 +112,36 @@ class CustomerManager(models.Manager):
         return errors
 
 
+class OrderManager(models.Manager):
+    def order_validator(self, postData):
+        errors = {}
+        # add keys and values to errors dictionary for each invalid field
+        if(postData['design'] is None or postData['design'] is ''):
+            errors["design"] = "design Name field is Required."
+        elif len(postData['design']) < 2:
+            errors["design"] = "design should be at least 2 characters"
+
+        if(postData['design_type'] is None or postData['design_type'] is ''):
+            errors["design_type"] = "design_type field is Required."
+        elif len(postData['design_type']) < 2:
+            errors["design_type"] = "design_type should be at least 2 characters"
+        ###########################################
+        # Date Valdation Test
+        if(postData['delivery'] is None or postData['delivery'] is ''):
+            errors["delivery"] = "delivery date is Required."
+        elif (datetime.datetime.strptime(postData['delivery'], '%Y-%m-%d') < datetime.datetime.today()):
+            errors["delivery"] = "delivery date must be in the Future."
+        # ###############################
+        # test whether a field matches the pattern
+
+        if postData['requirment'] is None or postData['requirment'] is '':
+            errors['requirment'] = 'Requirment field is required'
+        elif len(postData['requirment']) < 2:
+            errors["requirment"] = "Requirment should be at least 2 characters"
+
+        return errors
+
+
 class Customer(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -139,6 +169,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     joined_users = models.ManyToManyField(User, related_name="joined_order")
+    objects = OrderManager()
 
 
 class History(models.Model):

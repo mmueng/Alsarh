@@ -178,17 +178,17 @@ def show(request, customerID):
 def add_order(request, customerID):
     if not valid_login(request):
         return redirect('/')
-    # errors = Customer.objects.Customer_validator(request.POST)
-    # if len(errors) > 0:
-    #     for key, value in errors.items():
-    #         messages.error(request, value, key)
-    #     return redirect('/main/new')
-    # else:
-    user = User.objects.get(id=request.session['live_user'])
-    customer = Customer.objects.get(id=customerID)
+    errors = Order.objects.order_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value, key)
+        return redirect(f'/main/neworder/{customerID}/show')
+    else:
+        user = User.objects.get(id=request.session['live_user'])
+        customer = Customer.objects.get(id=customerID)
     # staff = User.objects.get(id=request.POST['engineer'])
-    print(customer)
-    Order.objects.create(
+        print(customer)
+        Order.objects.create(
         design=request.POST['design'], design_type=request.POST['design_type'], requirment=request.POST['requirment'],
         delivery=request.POST['delivery'],deletes = 'add',status='Received', customer_order=customer, user_to_order=user).joined_users.add(int(request.POST['engineer']))
     
@@ -212,38 +212,38 @@ def edit_order(request, customerID, orderID):
 def edit_order_process(request, customerID, orderID):
     if not valid_login(request):
         return redirect('/')
-    # # errors = Customer.objects.Books_validator(request.POST)
-    # if len(errors) > 0:
-    #     for key, value in errors.items():
-    #         messages.error(request, value, key)
-    #     return redirect('/book/'+bookID)
-    # else:
-    if request.method == 'POST':
+    errors = Order.objects.order_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value, key)
+        return redirect(f'/main/neworder/{customerID}/show')
+    else:
+        if request.method == 'POST':
             # request the live user id
-        engineer = request.POST['engineer']
-        design = request.POST['design']
-        design_type = request.POST['design_type']
-        delivery = request.POST['delivery']
-        requirment = request.POST['requirment']
+            engineer = request.POST['engineer']
+            design = request.POST['design']
+            design_type = request.POST['design_type']
+            delivery = request.POST['delivery']
+            requirment = request.POST['requirment']
 
         # live_user = User.objects.get(id=live_user)
         # request book that need to delete
 
         # customer = Customer.objects.get(id=customerID)
-        show = Order.objects.get(id=orderID)
+            show = Order.objects.get(id=orderID)
         # print('*'*10, live_user, '*'*3, show.uploaded_by_id.id)
         # if live user = author who create the book then delete
         # if live_user in show.book_to_user.all():
-        show.engineer = engineer
-        show.design = design
-        show.design_type = design_type
-        show.delivery = delivery
-        show.requirment = requirment
-        show.save()
-        orders = Order.objects.get(id=int(orderID))
-        user = User.objects.get(id=request.session['live_user'])
-        History.objects.create(orderHistory=orders, userHistory=user,first_name=user.first_name,last_name=user.last_name,status=orders.status, deletes = orders.deletes,approved = 0,completed=0)
-    return redirect(f'/main/neworder/{customerID}/{orderID}/show')
+            show.engineer = engineer
+            show.design = design
+            show.design_type = design_type
+            show.delivery = delivery
+            show.requirment = requirment
+            show.save()
+            orders = Order.objects.get(id=int(orderID))
+            user = User.objects.get(id=request.session['live_user'])
+            History.objects.create(orderHistory=orders,     userHistory=user,first_name=user.first_name,    last_name=user.last_name,status=orders.status,  deletes = orders.deletes,approved = 0,completed=0)
+        return redirect(f'/main/neworder/{customerID}/{orderID}/show')
 
 
 def show_order(request, customerID, orderID):
