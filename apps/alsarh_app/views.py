@@ -292,6 +292,9 @@ def post_comment(request,customerID, orderID):
     orders = Order.objects.get(id=int(orderID))
     # message = request.message
     print('****'*20, user.id, '****'*20)
+    request.POST['comment']
+    if request.POST['comment'] is '':
+        return redirect(f'/main/neworder/{customerID}/{orderID}/show')
     Comments.objects.create(
         comment=request.POST['comment'], user_to_comment=user, message_to_comment=orders)
     messages.success(request, "Post a Message successfully Created")
